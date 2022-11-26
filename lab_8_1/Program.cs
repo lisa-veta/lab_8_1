@@ -24,7 +24,6 @@ namespace lab_8
             StartTimer();
             Console.ReadKey();
         }
-
         private static void StartTimer()
         {
             aTimer = new Timer(1000);
@@ -32,18 +31,6 @@ namespace lab_8
             aTimer.AutoReset = true;
             aTimer.Enabled = true;
         }
-
-        //public static void DataFromStr(string str)
-        //{
-        //    char[] separators = {'-', '[', ']',};
-        //    str = str.Replace(" ", "");
-        //    //string[] subtitle = str.Split(separators);
-        //    subtitles.Add(str);
-        //    Console.WriteLine(int.Parse(str.Split(':')[0]) + int.Parse(str.Split(':')[1]));
-        //    //ChangeColor(subtitle);
-        //    //ChangeCursor(subtitle);
-        //    //CheckTime(subtitle);
-        //}
 
         public static void DrawScreen()
         {
@@ -56,7 +43,7 @@ namespace lab_8
                     else if (j == 0 || j == 99) sb.Append("|");
                     else sb.Append(" ");
                 }
-                sb.AppendLine("\n"); 
+                sb.AppendLine("\n");
             }
             Console.WriteLine(sb.ToString());
         }
@@ -73,20 +60,75 @@ namespace lab_8
 
                 if (start == Timer)
                 {
-                    Console.WriteLine(str);
+                    PrintSubtitle(str);
                 }
                 else if (finish == Timer)
                 {
-                    Console.WriteLine(str);
+                    DeleteSubtitle(str);
                 }
             }
             Timer++;
         }
 
-        static void PrintSubtitle()
+        static void PrintSubtitle(string str)
         {
+            СhangePosition(str);
+            СhangeColor(str);
+            string text = str.Substring(str.IndexOf("]" + 1));
+            Console.Write(text);
+        }
 
+        static void СhangeColor(string str)
+        {
+            string color = str.Substring(str.IndexOf(',')+1, str.IndexOf(']'));
+
+            switch(color)
+            {
+                case "Red":
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case "Green":
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case "Blue":
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
+                case "White":
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+            }
+        }
+
+        static void СhangePosition(string str)
+        {
+            string position = str.Substring(str.IndexOf('[') + 1, str.IndexOf(','));
+            string text = str.Substring(str.IndexOf("]" + 1));
+            switch (position)
+            {
+                case "Top":
+                    Console.SetCursorPosition((100 - text.Length) / 2, 1);
+                    break;
+                case "Bottom":
+                    Console.SetCursorPosition((100 - text.Length) / 2, 26 - 1);
+                    break;
+                case "Right":
+                    Console.SetCursorPosition(100 - 1 - text.Length, 26 / 2);
+                    break;
+                case "Left":
+                    Console.SetCursorPosition(1, 26 / 2);
+                    break;
+            }
+        }
+        static void DeleteSubtitle(string str)
+        {
+            СhangePosition(str);
+            string text = str.Substring(str.IndexOf("]" + 1));
+            for (int i = 0; i < text.Length; i++)
+            {
+                Console.Write(" ");
+            }
         }
 
     }
+    
 }
