@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Timers;
+using static System.Net.Mime.MediaTypeNames;
 using Timer = System.Timers.Timer;
 
 namespace lab_8
@@ -13,19 +14,22 @@ namespace lab_8
     {
         static Timer aTimer;
         static int Timer = 0;
-        public static List<string> subtitles = new List<string>();
+        static List<string> subtitles = new List<string>();
+        static int width = 100;
+        static int height = 30;
         static void Main(string[] args)
         {
             foreach (string str in File.ReadAllLines("D:\\УНИВЕР\\прога\\лб8\\LB8.txt"))
             {
-                subtitles.Add(str.Replace(" ", ""));
+                subtitles.Add(str);
             }
+
             DrawScreen();
             StartTimer();
 
             Console.ReadKey();
         }
-        private static void StartTimer()
+        static void StartTimer()
         {
             aTimer = new Timer(1000);
             aTimer.Elapsed += CheckTime;
@@ -33,18 +37,27 @@ namespace lab_8
             aTimer.Enabled = true;
         }
 
-        public static void DrawScreen()
+        static void DrawScreen()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < height+1; i++)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < width+1; j++)
                 {
-                    if (i == 0 || i == 14) sb.Append("-");
-                    else if (j == 0 || j == 99) sb.Append("|");
-                    else sb.Append(" ");
+                    if (i == 0 || i == height)
+                    {
+                        sb.Append("-");
+                    }
+                    else if (j == 0 || j == width)
+                    {
+                        sb.Append("|");
+                    }
+                    else
+                    {
+                        sb.Append(" ");
+                    } 
                 }
-                sb.AppendLine("\n");
+                sb.Append("\n");
             }
             Console.WriteLine(sb.ToString());
         }
@@ -54,7 +67,7 @@ namespace lab_8
             foreach (var subtitle in subtitles)
             {
                 string[] startTime = subtitle.Substring(0, 5).Split(':');
-                string[] finishTime = subtitle.Substring(6, 5).Split(':');
+                string[] finishTime = subtitle.Substring(8, 5).Split(':');
 
                 int start = 60 * int.Parse(startTime[0]) + int.Parse(startTime[1]);
                 int finish = 60 * int.Parse(finishTime[0]) + int.Parse(finishTime[1]);
@@ -63,7 +76,7 @@ namespace lab_8
                 {
                     PrintSubtitle(subtitle);
                 }
-                else if (finish == Timer)
+                if (finish == Timer)
                 {
                     DeleteSubtitle(subtitle);
                 }
@@ -75,50 +88,70 @@ namespace lab_8
         {
             СhangePosition(str);
             СhangeColor(str);
-            string text = str.Substring((str.IndexOf("]") + 1));
-            Console.WriteLine(text);
+            if(str.Contains('['))
+                Console.WriteLine(str.Substring((str.IndexOf("]") + 1)));
+            else
+                Console.WriteLine(str.Substring(14));
         }
 
         static void СhangeColor(string str)
         {
-            string color = str.Substring(str.IndexOf(',') + 1, str.IndexOf(']') - str.IndexOf(',') - 1);
-
-            switch (color)
-            {
-                case "Red":
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case "Green":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-                case "Blue":
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    break;
-                case "White":
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
-            }
+            //if(str.Contains('['))
+            //{
+                string color = str.Substring(str.IndexOf(',') + 2, str.IndexOf(']') - str.IndexOf(',')-2);
+                switch (color)
+                {
+                    case "Red":
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case "Green":
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        break;
+                    case "Blue":
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                }
+            //}
+            //else
+            //{
+            //    Console.ForegroundColor = ConsoleColor.White;
+            //}
         }
 
         static void СhangePosition(string str)
         {
-            string position = str.Substring(str.IndexOf('[') + 1, str.IndexOf(',') - str.IndexOf('[') - 1);
-            string text = str.Substring((str.IndexOf("]") + 1));
-            switch (position)
-            {
-                case "Top":
-                    Console.SetCursorPosition((100 - text.Length) / 2, 2);
-                    break;
-                case "Bottom":
-                    Console.SetCursorPosition((100 - text.Length) / 2, 26 - 1);
-                    break;
-                case "Right":
-                    Console.SetCursorPosition(100 - 2 - text.Length, 26 / 2);
-                    break;
-                case "Left":
-                    Console.SetCursorPosition(2, 26 / 2);
-                    break;
-            }
+            //if (str.Contains('['))
+            //{
+                string position = str.Substring(str.IndexOf('[') + 1, str.IndexOf(',') - str.IndexOf('[') - 1);
+                string text = str.Substring((str.IndexOf("]") + 2));
+                switch (position)
+                {
+                    case "Top":
+                        Console.SetCursorPosition((width - text.Length) / 2, 1);
+                        break;
+                    case "Bottom":
+                        Console.SetCursorPosition((width - text.Length) / 2, height - 1);
+                        break;
+                    case "Right":
+                        Console.SetCursorPosition(width - text.Length - 1, height / 2);
+                        break;
+                    case "Left":
+                        Console.SetCursorPosition(2, height / 2);
+                        break;
+                    default:
+                        text = str.Substring(14);
+                        Console.SetCursorPosition((width - text.Length) / 2, height - 1);
+                        break;
+                }
+            //}
+            //else
+            //{
+            //    string text = str.Substring(14);
+            //    Console.SetCursorPosition((width - text.Length) / 2, height - 1);
+            //}
         }
         static void DeleteSubtitle(string str)
         {
