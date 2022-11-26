@@ -22,6 +22,7 @@ namespace lab_8
             }
             DrawScreen();
             StartTimer();
+
             Console.ReadKey();
         }
         private static void StartTimer()
@@ -50,21 +51,21 @@ namespace lab_8
 
         static void CheckTime(Object source, ElapsedEventArgs e)
         {
-            foreach (string str in subtitles)
+            foreach (var subtitle in subtitles)
             {
-                string[] startTime = str.Substring(0, 5).Split(':');
-                string[] finishTime = str.Substring(5, 5).Split(':');
+                string[] startTime = subtitle.Substring(0, 5).Split(':');
+                string[] finishTime = subtitle.Substring(6, 5).Split(':');
 
                 int start = 60 * int.Parse(startTime[0]) + int.Parse(startTime[1]);
                 int finish = 60 * int.Parse(finishTime[0]) + int.Parse(finishTime[1]);
 
                 if (start == Timer)
                 {
-                    PrintSubtitle(str);
+                    PrintSubtitle(subtitle);
                 }
                 else if (finish == Timer)
                 {
-                    DeleteSubtitle(str);
+                    DeleteSubtitle(subtitle);
                 }
             }
             Timer++;
@@ -74,15 +75,15 @@ namespace lab_8
         {
             СhangePosition(str);
             СhangeColor(str);
-            string text = str.Substring(str.IndexOf("]" + 1));
-            Console.Write(text);
+            string text = str.Substring((str.IndexOf("]") + 1));
+            Console.WriteLine(text);
         }
 
         static void СhangeColor(string str)
         {
-            string color = str.Substring(str.IndexOf(',')+1, str.IndexOf(']'));
+            string color = str.Substring(str.IndexOf(',') + 1, str.IndexOf(']') - str.IndexOf(',') - 1);
 
-            switch(color)
+            switch (color)
             {
                 case "Red":
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -101,28 +102,28 @@ namespace lab_8
 
         static void СhangePosition(string str)
         {
-            string position = str.Substring(str.IndexOf('[') + 1, str.IndexOf(','));
-            string text = str.Substring(str.IndexOf("]" + 1));
+            string position = str.Substring(str.IndexOf('[') + 1, str.IndexOf(',') - str.IndexOf('[') - 1);
+            string text = str.Substring((str.IndexOf("]") + 1));
             switch (position)
             {
                 case "Top":
-                    Console.SetCursorPosition((100 - text.Length) / 2, 1);
+                    Console.SetCursorPosition((100 - text.Length) / 2, 2);
                     break;
                 case "Bottom":
                     Console.SetCursorPosition((100 - text.Length) / 2, 26 - 1);
                     break;
                 case "Right":
-                    Console.SetCursorPosition(100 - 1 - text.Length, 26 / 2);
+                    Console.SetCursorPosition(100 - 2 - text.Length, 26 / 2);
                     break;
                 case "Left":
-                    Console.SetCursorPosition(1, 26 / 2);
+                    Console.SetCursorPosition(2, 26 / 2);
                     break;
             }
         }
         static void DeleteSubtitle(string str)
         {
             СhangePosition(str);
-            string text = str.Substring(str.IndexOf("]" + 1));
+            string text = str.Substring((str.IndexOf("]") + 1));
             for (int i = 0; i < text.Length; i++)
             {
                 Console.Write(" ");
