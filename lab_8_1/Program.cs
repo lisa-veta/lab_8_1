@@ -83,7 +83,10 @@ namespace lab_8
             Timer++;
         }
 
-        static void 
+        static void PrintSubtitle()
+        {
+
+        }
 
     }
 }
