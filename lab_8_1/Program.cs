@@ -1,11 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Timers;
-using static System.Net.Mime.MediaTypeNames;
 using Timer = System.Timers.Timer;
 
 namespace lab_8
@@ -20,19 +16,21 @@ namespace lab_8
     }
     class Program
     {
-        static Timer aTimer;
+        static Timer timer;
         static int Timer = 0;
         static List<Subtitles> subtitles = new List<Subtitles>();
-        static int width = 100;
-        static int height = 30;
+        static int width = 95;
+        static int height = 25;
+
         static void Main(string[] args)
         {
-            GoSub();
+            ReadFile();
             DrawScreen();
             StartTimer();
             Console.ReadKey();
         }
-        static void GoSub()
+
+        static void ReadFile()
         {
             foreach (string str in File.ReadAllLines("D:\\УНИВЕР\\прога\\лб8\\LB8.txt"))
             {
@@ -63,39 +61,38 @@ namespace lab_8
         static void DrawScreen()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < height+1; i++)
+           
+            sb.Append(new string('-', width));
+            sb.Append("\n");
+
+            for(int i = 0; i < height; i++)
             {
-                for (int j = 0; j < width+1; j++)
+                for (int j = 0; j < width + 1; j++)
                 {
-                    if (i == 0 || i == height)
-                    {
-                        sb.Append("-");
-                    }
-                    else if (j == 0 || j == width)
-                    {
+                    if (j == 0 || j == width)
                         sb.Append("|");
-                    }
                     else
-                    {
                         sb.Append(" ");
-                    } 
                 }
                 sb.Append("\n");
             }
+
+            sb.Append(new string('-', width));
+
             Console.WriteLine(sb.ToString());
         }
 
         static void StartTimer()
         {
-            aTimer = new Timer(1000);
-            aTimer.Elapsed += CheckTime;
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
+            timer = new Timer(1000);
+            timer.Elapsed += CheckTime;
+            timer.AutoReset = true;
+            timer.Enabled = true;
         }
 
         static void CheckTime(Object source, ElapsedEventArgs e)
         {
-            foreach (var subtitle in subtitles)
+            foreach (Subtitles subtitle in subtitles)
             {
                 if (subtitle.StartTime == Timer)
                 {
@@ -132,6 +129,8 @@ namespace lab_8
                 case "White":
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
+                default:
+                    break;
             }
         }
 
@@ -143,13 +142,15 @@ namespace lab_8
                     Console.SetCursorPosition((width - subtitle.Text.Length) / 2, 1);
                     break;
                 case "Bottom":
-                    Console.SetCursorPosition((width - subtitle.Text.Length) / 2, height - 1);
+                    Console.SetCursorPosition((width - subtitle.Text.Length) / 2, height);
                     break;
                 case "Right":
                     Console.SetCursorPosition(width - subtitle.Text.Length - 1, height / 2);
                     break;
                 case "Left":
                     Console.SetCursorPosition(2, height / 2);
+                    break;
+                default:
                     break;
             }
         }
